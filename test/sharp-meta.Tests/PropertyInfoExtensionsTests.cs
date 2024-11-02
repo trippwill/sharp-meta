@@ -15,48 +15,48 @@ public class PropertyInfoExtensionsTests
     [Fact]
     public void IsNullable_ShouldReturnTrue_ForNullableValueType()
     {
-        var property = typeof(TestClass).GetProperty(nameof(TestClass.NullableValueType));
-        var result = property.IsNullable();
+        System.Reflection.PropertyInfo? property = typeof(TestClass).GetProperty(nameof(TestClass.NullableValueType));
+        bool result = property!.IsNullable();
         Assert.True(result);
     }
 
     [Fact]
     public void IsNullable_ShouldReturnFalse_ForNonNullableValueType()
     {
-        var property = typeof(TestClass).GetProperty(nameof(TestClass.NonNullableValueType));
-        var result = property.IsNullable();
+        System.Reflection.PropertyInfo? property = typeof(TestClass).GetProperty(nameof(TestClass.NonNullableValueType));
+        bool result = property!.IsNullable();
         Assert.False(result);
     }
 
     [Fact]
     public void IsNullable_ShouldReturnTrue_ForNullableReferenceType()
     {
-        var property = typeof(TestClass).GetProperty(nameof(TestClass.NullableReferenceType));
-        var result = property.IsNullable();
+        System.Reflection.PropertyInfo? property = typeof(TestClass).GetProperty(nameof(TestClass.NullableReferenceType));
+        bool result = property!.IsNullable();
         Assert.True(result);
     }
 
     [Fact]
     public void IsNullable_ShouldReturnFalse_ForNonNullableReferenceType()
     {
-        var property = typeof(TestClass).GetProperty(nameof(TestClass.NonNullableReferenceType));
-        var result = property.IsNullable();
+        System.Reflection.PropertyInfo? property = typeof(TestClass).GetProperty(nameof(TestClass.NonNullableReferenceType));
+        bool result = property!.IsNullable();
         Assert.False(result);
     }
 
     [Fact]
     public void IsNullableReference_ShouldReturnTrue_ForNullableReferenceType()
     {
-        var property = typeof(TestClass).GetProperty(nameof(TestClass.NullableReferenceType));
-        var result = property.IsNullableReference();
+        System.Reflection.PropertyInfo? property = typeof(TestClass).GetProperty(nameof(TestClass.NullableReferenceType));
+        bool result = property!.IsNullableReference();
         Assert.True(result);
     }
 
     [Fact]
     public void IsNullableReference_ShouldReturnFalse_ForNonNullableReferenceType()
     {
-        var property = typeof(TestClass).GetProperty(nameof(TestClass.NonNullableReferenceType));
-        var result = property.IsNullableReference();
+        System.Reflection.PropertyInfo? property = typeof(TestClass).GetProperty(nameof(TestClass.NonNullableReferenceType));
+        bool result = property!.IsNullableReference();
         Assert.False(result);
     }
 }

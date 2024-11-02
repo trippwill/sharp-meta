@@ -9,8 +9,8 @@ public class AssemblyLoadContextTests(ITestOutputHelper outputHelper)
     [Fact]
     public void Constructor_ShouldInitializeProperties()
     {
-        var referenceFiles = new FileInfo[] { new FileInfo(Assembly.GetExecutingAssembly().Location) };
-        var referenceDirectories = new DirectoryInfo[] { new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)) };
+        var referenceFiles = new FileInfo[] { new(Assembly.GetExecutingAssembly().Location) };
+        var referenceDirectories = new DirectoryInfo[] { new(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!) };
 
         using var context = new AssemblyLoadContext(
             logAction: outputHelper.WriteLine,
@@ -26,8 +26,8 @@ public class AssemblyLoadContextTests(ITestOutputHelper outputHelper)
     [Fact]
     public void LoadAssembly_ShouldLoadAssembly()
     {
-        var referenceFiles = new FileInfo[] { new FileInfo(Assembly.GetExecutingAssembly().Location) };
-        var referenceDirectories = new DirectoryInfo[] { new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)) };
+        var referenceFiles = new FileInfo[] { new(Assembly.GetExecutingAssembly().Location) };
+        var referenceDirectories = new DirectoryInfo[] { new(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!) };
 
         using var context = new AssemblyLoadContext(
             logAction: outputHelper.WriteLine,
@@ -37,7 +37,7 @@ public class AssemblyLoadContextTests(ITestOutputHelper outputHelper)
             includeExecutingCoreAssembly: true,
             includeExecutingRuntimeAssemblies: true);
 
-        var assembly = context.LoadAssembly(new FileInfo(Assembly.GetExecutingAssembly().Location));
+        Assembly assembly = context.LoadAssembly(new FileInfo(Assembly.GetExecutingAssembly().Location));
         Assert.NotNull(assembly);
         Assert.Equal(Assembly.GetExecutingAssembly().FullName, assembly.FullName);
     }

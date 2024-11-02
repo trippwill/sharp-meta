@@ -7,8 +7,8 @@ public class TypeExtensionsTests
     [Fact]
     public void TryUnwrapNullable_ShouldReturnTrue_WhenNullableType()
     {
-        var type = typeof(int?);
-        var result = type.TryUnwrapNullable(out var underlyingType);
+        Type type = typeof(int?);
+        bool result = type.TryUnwrapNullable(out Type? underlyingType);
         Assert.True(result);
         Assert.Equal(typeof(int), underlyingType);
     }
@@ -16,8 +16,8 @@ public class TypeExtensionsTests
     [Fact]
     public void TryUnwrapNullable_ShouldReturnFalse_WhenNonNullableType()
     {
-        var type = typeof(int);
-        var result = type.TryUnwrapNullable(out var underlyingType);
+        Type type = typeof(int);
+        bool result = type.TryUnwrapNullable(out Type? underlyingType);
         Assert.False(result);
         Assert.Null(underlyingType);
     }
@@ -32,8 +32,8 @@ public class TypeExtensionsTests
     [Fact]
     public void IsProbableDictionary_ShouldReturnTrue()
     {
-        var type = typeof(Dictionary<int, string>);
-        var result = type.IsProbableDictionary(out var keyType, out var valueType);
+        Type type = typeof(Dictionary<int, string>);
+        bool result = type.IsProbableDictionary(out Type? keyType, out Type? valueType);
         Assert.True(result);
         Assert.Equal(typeof(int), keyType);
         Assert.Equal(typeof(string), valueType);

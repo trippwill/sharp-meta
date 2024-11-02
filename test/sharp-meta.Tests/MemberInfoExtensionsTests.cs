@@ -8,10 +8,10 @@ public class MemberInfoExtensionsTests
     [Fact]
     public void TryGetCustomAttributeData_FromAttributeDataCollection_ShouldReturnTrue()
     {
-        var type = typeof(SampleClass);
-        var attributeData = type.GetCustomAttributesData().First(a => a.AttributeType == typeof(SampleAttribute));
+        Type type = typeof(SampleClass);
+        CustomAttributeData attributeData = type.GetCustomAttributesData().First(a => a.AttributeType == typeof(SampleAttribute));
         var attributeDataList = new List<CustomAttributeData> { attributeData };
-        var result = attributeDataList.TryGetCustomAttributeData<SampleAttribute>(out var foundAttributeData);
+        bool result = attributeDataList.TryGetCustomAttributeData<SampleAttribute>(out CustomAttributeData? foundAttributeData);
         Assert.True(result);
         Assert.NotNull(foundAttributeData);
     }
@@ -19,8 +19,8 @@ public class MemberInfoExtensionsTests
     [Fact]
     public void TryGetCustomAttributeData_FromMemberInfo_ShouldReturnTrue()
     {
-        var member = typeof(SampleClass).GetMethod(nameof(SampleClass.SampleMethod));
-        var result = member.TryGetCustomAttributeData<SampleAttribute>(out var attributeData);
+        MethodInfo? member = typeof(SampleClass).GetMethod(nameof(SampleClass.SampleMethod));
+        bool result = member!.TryGetCustomAttributeData<SampleAttribute>(out CustomAttributeData? attributeData);
         Assert.True(result);
         Assert.NotNull(attributeData);
     }
@@ -28,8 +28,8 @@ public class MemberInfoExtensionsTests
     [Fact]
     public void TryGetCustomAttributeData_FromMemberInfoAndType_ShouldReturnTrue()
     {
-        var member = typeof(SampleClass).GetMethod(nameof(SampleClass.SampleMethod));
-        var result = member.TryGetCustomAttributeData(typeof(SampleAttribute), out var attributeData);
+        MethodInfo? member = typeof(SampleClass).GetMethod(nameof(SampleClass.SampleMethod));
+        bool result = member!.TryGetCustomAttributeData(typeof(SampleAttribute), out CustomAttributeData? attributeData);
         Assert.True(result);
         Assert.NotNull(attributeData);
     }
@@ -37,8 +37,8 @@ public class MemberInfoExtensionsTests
     [Fact]
     public void TryGetCustomAttributeData_FromMemberInfoAndString_ShouldReturnTrue()
     {
-        var member = typeof(SampleClass).GetMethod(nameof(SampleClass.SampleMethod));
-        var result = member.TryGetCustomAttributeData(typeof(SampleAttribute).FullName, out var attributeData);
+        MethodInfo? member = typeof(SampleClass).GetMethod(nameof(SampleClass.SampleMethod));
+        bool result = member!.TryGetCustomAttributeData(typeof(SampleAttribute).FullName!, out CustomAttributeData? attributeData);
         Assert.True(result);
         Assert.NotNull(attributeData);
     }
