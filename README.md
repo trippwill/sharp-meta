@@ -1,4 +1,4 @@
-# Your Library
+# SharpMeta
 
 ***An opiniated library for inspecting .NET assembly Metadata***
 
@@ -266,7 +266,7 @@ public static bool TryGetConstructorArgument<T>(this CustomAttributeData customA
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a pull request or open an issue to discuss any changes. See [CONTRIBUTING](CONTRIBUTING).
+Contributions are welcome! Please feel free to submit a pull request or open an issue to discuss any changes. See [CONTRIBUTING](CONTRIBUTING.md).
 
 ## License
 
