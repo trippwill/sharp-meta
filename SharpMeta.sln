@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29322.22
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35424.110
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1CE9670B-D5FF-46A7-9D00-24E70E6ED48B}"
 	ProjectSection(SolutionItems) = preProject
@@ -12,7 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		global.json = global.json
 		nuget.config = nuget.config
 		README.md = README.md
-		stylecop.json = stylecop.json
 		version.json = version.json
 	EndProjectSection
 EndProject
@@ -32,11 +31,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{36CCE840-6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B621E378-EA43-4CEB-9A96-3116689679E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sharp-meta", "src\sharp-meta\sharp-meta.csproj", "{C4A3B044-8676-4FE7-980C-4344240B52C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpMeta", "src\sharp-meta\SharpMeta.csproj", "{C4A3B044-8676-4FE7-980C-4344240B52C8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{D013307E-C256-48C4-88C6-E8FC8BB09078}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sharp-meta.Tests", "test\sharp-meta.Tests\sharp-meta.Tests.csproj", "{5E3027A4-922A-4E64-8CE1-F9B7F193B6C0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpMeta.Tests", "test\sharp-meta.Tests\SharpMeta.Tests.csproj", "{5E3027A4-922A-4E64-8CE1-F9B7F193B6C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
