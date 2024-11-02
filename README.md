@@ -3,7 +3,7 @@
 ***An opiniated library for inspecting .NET assembly Metadata***
 
 [![NuGet package](https://img.shields.io/nuget/v/SharpMeta.svg)](https://nuget.org/packages/SharpMeta)
-
+[![codecov](https://codecov.io/gh/trippwill/sharp-meta/graph/badge.svg?token=uzEl9z9BoS)](https://codecov.io/gh/trippwill/sharp-meta)
 
 # SharpMeta
 
