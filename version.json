@@ -5,7 +5,7 @@
     "branchName" : "release/v{version}",
     "versionIncrement" : "minor",
     "firstUnstableTag" : "alpha"
-  }
+  },
   "publicReleaseRefSpec": [
     "^refs/heads/main$",
     "^refs/heads/v\\d+(?:\\.\\d+)?$"
