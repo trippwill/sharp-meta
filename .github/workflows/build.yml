@@ -6,7 +6,7 @@ on:
     branches:
       - main
       - validate/*
-      - releaase/*
+      - release/*
     tags:
       - v1.*
   pull_request:
