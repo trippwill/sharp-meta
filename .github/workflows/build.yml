@@ -1,10 +1,14 @@
 name: CI
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
       - validate/*
+      - releaase/*
+    tags:
+      - v1.*
   pull_request:
 
 env:
