@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace SharpMeta;
 
 /// <summary>
-/// Initializes a new instance of the <see cref="AssemblyLoadContext"/> class.
+/// Initializes a new instance of the <see cref="AssemblyLoader"/> class.
 /// </summary>
 /// <param name="logAction">The action for error output.</param>
 /// <param name="directoryRecursionDepth">The maximum recursion depth when searching for reference files in directories.</param>
@@ -12,14 +12,13 @@ namespace SharpMeta;
 /// <param name="referenceDirectories">A collection of reference directories.</param>
 /// <param name="includeExecutingCoreAssembly">Attempt to add the core assembly path of the executing assembly to the load context.</param>
 /// <param name="includeExecutingRuntimeAssemblies">Attempt to add the runtime assemblies of the executing assembly to the load context.</param>
-public sealed class AssemblyLoadContext(
+public sealed class AssemblyLoader(
     Action<string>? logAction,
     int directoryRecursionDepth,
     FileInfo[] referenceFiles,
     DirectoryInfo[] referenceDirectories,
     bool includeExecutingCoreAssembly = false,
-    bool includeExecutingRuntimeAssemblies = false
-    ) : IDisposable
+    bool includeExecutingRuntimeAssemblies = false) : IDisposable
 {
     private readonly MetadataLoadContext _context = GetContext(
         logAction,

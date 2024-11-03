@@ -4,7 +4,7 @@ using Xunit.Abstractions;
 
 namespace SharpMeta.Tests;
 
-public class AssemblyLoadContextTests(ITestOutputHelper outputHelper)
+public class AssemblyLoaderTests(ITestOutputHelper outputHelper)
 {
     [Fact]
     public void Constructor_ShouldInitializeProperties()
@@ -12,7 +12,7 @@ public class AssemblyLoadContextTests(ITestOutputHelper outputHelper)
         var referenceFiles = new FileInfo[] { new(Assembly.GetExecutingAssembly().Location) };
         var referenceDirectories = new DirectoryInfo[] { new(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!) };
 
-        using var context = new AssemblyLoadContext(
+        using var context = new AssemblyLoader(
             logAction: outputHelper.WriteLine,
             directoryRecursionDepth: 2,
             referenceFiles: referenceFiles,
@@ -29,7 +29,7 @@ public class AssemblyLoadContextTests(ITestOutputHelper outputHelper)
         var referenceFiles = new FileInfo[] { new(Assembly.GetExecutingAssembly().Location) };
         var referenceDirectories = new DirectoryInfo[] { new(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!) };
 
-        using var context = new AssemblyLoadContext(
+        using var context = new AssemblyLoader(
             logAction: outputHelper.WriteLine,
             directoryRecursionDepth: 2,
             referenceFiles: referenceFiles,

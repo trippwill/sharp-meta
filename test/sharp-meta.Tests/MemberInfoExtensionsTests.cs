@@ -35,11 +35,38 @@ public class MemberInfoExtensionsTests
     }
 
     [Fact]
-    public void TryGetCustomAttributeData_FromMemberInfoAndString_ShouldReturnTrue()
+    public void GetAllCustomAttributeData_ShouldReturnAllAttributes()
+    {
+        Type type = typeof(SampleClass);
+        IList<CustomAttributeData>? attributes = type.GetAllCustomAttributeData(includeInherited: false);
+        Assert.NotNull(attributes);
+        Assert.Contains(attributes, a => a.AttributeType == typeof(SampleAttribute));
+    }
+
+    [Fact]
+    public void GetAllCustomAttributeData_ShouldIncludeInheritedAttributes()
+    {
+        Type type = typeof(DerivedSampleClass);
+        IList<CustomAttributeData>? attributes = type.GetAllCustomAttributeData(includeInherited: true);
+        Assert.NotNull(attributes);
+        Assert.Contains(attributes, a => a.AttributeType == typeof(SampleAttribute));
+    }
+
+    [Fact]
+    public void GetAllCustomAttributeData_ShouldReturnAttributesForMember()
     {
         MethodInfo? member = typeof(SampleClass).GetMethod(nameof(SampleClass.SampleMethod));
-        bool result = member!.TryGetCustomAttributeData(typeof(SampleAttribute).FullName!, out CustomAttributeData? attributeData);
-        Assert.True(result);
-        Assert.NotNull(attributeData);
+        IList<CustomAttributeData>? attributes = member!.GetAllCustomAttributeData(includeInherited: false);
+        Assert.NotNull(attributes);
+        Assert.Contains(attributes, a => a.AttributeType == typeof(SampleAttribute));
+    }
+
+    [Fact]
+    public void GetAllCustomAttributeData_ShouldIncludeInheritedAttributesForMember()
+    {
+        MethodInfo? member = typeof(DerivedSampleClass).GetMethod(nameof(DerivedSampleClass.SampleMethod));
+        IList<CustomAttributeData>? attributes = member!.GetAllCustomAttributeData(includeInherited: true);
+        Assert.NotNull(attributes);
+        Assert.Contains(attributes, a => a.AttributeType == typeof(SampleAttribute));
     }
 }
