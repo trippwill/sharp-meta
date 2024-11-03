@@ -82,4 +82,51 @@ public class SharpAssemblyResolverBuilderTests(ITestOutputHelper outputHelper)
         SharpAssemblyResolver resolver = builder.ToAssemblyResolver();
         Assert.NotNull(resolver);
     }
+
+    [Fact]
+    public void AddAssembly_ShouldLogWarning_WhenAssemblyPathIsOverwritten()
+    {
+        // Arrange
+        var logger = new TestLogger();
+        SharpAssemblyResolver.Builder builder = SharpAssemblyResolver.CreateBuilder(logger);
+
+        var tempFilePath = Path.Combine(Path.GetTempPath(), "test.dll");
+        File.WriteAllText(tempFilePath, ""); // Create an empty file
+        var file = new FileInfo(tempFilePath);
+
+        // Act
+        builder.AddReferenceFile(file);
+        builder.AddReferenceFile(file); // Add the same file again to trigger the warning
+
+        // Assert
+        Assert.Contains($"Overwriting existing assembly path: {file.FullName}.", logger.Warnings);
+    }
+
+    [Fact]
+    public void AddAssembly_ShouldNotLogWarning_WhenAssemblyPathIsNotOverwritten()
+    {
+        // Arrange
+        var logger = new TestLogger();
+        SharpAssemblyResolver.Builder builder = SharpAssemblyResolver.CreateBuilder(logger);
+        var file1 = new FileInfo("test1.dll");
+        var file2 = new FileInfo("test2.dll");
+
+        // Act
+        builder.AddReferenceFile(file1);
+        builder.AddReferenceFile(file2); // Add a different file
+
+        // Assert
+        Assert.DoesNotContain($"Overwriting existing assembly path: {file1.FullName}.", logger.Warnings);
+        Assert.DoesNotContain($"Overwriting existing assembly path: {file2.FullName}.", logger.Warnings);
+    }
+
+    private class TestLogger : SharpResolverLogger
+    {
+        public List<string> Warnings { get; } = new List<string>();
+
+        public TestLogger()
+        {
+            this.OnWarning = message => this.Warnings.Add(message);
+        }
+    }
 }
