@@ -7,7 +7,11 @@
 
 # SharpMeta
 
-SharpMeta is a .NET library designed to facilitate the loading and inspection of .NET assemblies using the `System.Reflection.MetadataLoadContext`. This library provides a robust and flexible way to load assemblies from specified file paths and directories, with support for logging and directory recursion.
+SharpMeta is a .NET library that facilitates the loading and inspection of .NET assemblies using the `System.Reflection.MetadataLoadContext`.
+This library provides a robust and flexible way to load assemblies from specified file paths and directories,
+while also providing extension methods for inspecting type and attribute metadata.
+
+Using `SharpAssemblyResolver.Builder.AddReferenceDirectories("path/to/target-framework")`, SharpMeta can load and inspect .NET assemblies compiled for any target framework -- including .NET and .NET Framework.
 
 ## Features
 
@@ -21,14 +25,13 @@ SharpMeta is a .NET library designed to facilitate the loading and inspection of
 
 ### Prerequisites
 
-- .NET 8.0 SDK or later
+- .NET 8.0 SDK
 
 ### Installation
 
 To use SharpMeta in your project, add the following package reference to your `.csproj` file:
 
-
-```
+```csharp
 <ItemGroup>
   <PackageReference Include="SharpMeta" />
 </ItemGroup>
@@ -36,7 +39,7 @@ To use SharpMeta in your project, add the following package reference to your `.
 
 ### Usage
 
-Below is an example of how to use the `AssemblyLoadContext` class provided by SharpMeta:
+Below is an example of how to use the `SharpAssemblyResolver` class provided by SharpMeta:
 
 
 ```csharp
@@ -60,15 +63,13 @@ class Program
             new DirectoryInfo("path/to/your/reference/directory")
         };
 
-        using var context = new AssemblyLoadContext(
-            logAction: Console.WriteLine,
-            directoryRecursionDepth: 2,
-            referenceFiles: referenceFiles,
-            referenceDirectories: referenceDirectories,
-            includeExecutingCoreAssembly: true,
-            includeExecutingRuntimeAssemblies: true);
+        using var context = SharpAssemblyResolver.CreateBuilder()
+            .AddReferenceFiles(referenceFiles)
+            .AddReferenceDirectories(referenceDirectories)
+            .ToAssemblyResolver()
+            .ToMetadataLoadContext();
 
-        var assembly = context.LoadAssembly(new FileInfo("path/to/your/target/assembly.dll"));
+        var assembly = context.LoadFromAssemblyPath("path/to/your/target/assembly.dll");
         Console.WriteLine($"Loaded Assembly: {assembly.FullName}");
 
         // Example usage of extension methods
@@ -106,34 +107,34 @@ class Program
 
 ### API Reference
 
-#### `AssemblyLoadContext`
+#### `SharpAssemblyResolver`
+
+- **Methods**
+  - `public static Builder CreateBuilder(SharpResolverLogger? logger = null)`: Creates a new `Builder` instance.
+  - `public static MetadataLoadContext CreateExecutingAssemblyLoadContext()`: Creates a `MetadataLoadContext` for the executing assembly.
+  - `public static implicit operator SharpAssemblyResolver(Builder builder)`: Implicitly converts a `Builder` to a `SharpAssemblyResolver`.
+  - `public static implicit operator MetadataLoadContext(SharpAssemblyResolver resolver)`: Implicitly converts a `SharpAssemblyResolver` to a `MetadataLoadContext`.
+  - `public MetadataLoadContext ToMetadataLoadContext()`: Converts the resolver to a `MetadataLoadContext`.
+
+#### `SharpAssemblyResolver.Builder`
 
 - **Constructor**
 
 
 ```csharp
-public AssemblyLoadContext(
-    Action<string>? logAction,
-    int directoryRecursionDepth,
-    FileInfo[] referenceFiles,
-    DirectoryInfo[] referenceDirectories,
-    bool includeExecutingCoreAssembly = false,
-    bool includeExecutingRuntimeAssemblies = false)
+internal Builder(SharpResolverLogger? logger = null)
 ```
 
-  - `logAction`: The action for error output.
-  - `directoryRecursionDepth`: The maximum recursion depth when searching for reference files in directories.
-  - `referenceFiles`: A collection of reference files.
-  - `referenceDirectories`: A collection of reference directories.
-  - `includeExecutingCoreAssembly`: Whether to include the executing assembly's core assembly.`
-  - `includeExecutingRuntimeAssemblies`: Whether to include the executing assembly's runtime assemblies.`
-
-- **Properties**
-  - `MetadataLoadContext LoadContext`: Gets the internal metadata load context.
+  - `logger`: The logger to use for load context events.
 
 - **Methods**
-  - `void Dispose()`: Disposes the internal metadata load context.
-  - `Assembly LoadAssembly(FileInfo assemblyFile)`: Loads an assembly from the specified file path.
+  - `public SharpAssemblyResolver ToAssemblyResolver()`: Converts the builder to a `SharpAssemblyResolver`.
+  - `public Builder AddReferenceDirectory(DirectoryInfo directory, EnumerationOptions? options = null)`: Adds a reference directory to the builder.
+  - `public Builder AddReferenceDirectories(EnumerationOptions options, params DirectoryInfo[] directories)`: Adds multiple reference directories to the builder.
+  - `public Builder AddReferenceFile(FileInfo file, bool includeSideBySideAssemblies = false)`: Adds a reference file to the builder.
+  - `public Builder AddReferenceFiles(params FileInfo[] files)`: Adds multiple reference files to the builder.
+  - `public Builder AddExecutingAssembly(bool includeSideBySideAssemblies = false, int sideBySideRecursionDepth = 1)`: Adds the executing assembly to the builder.
+  - `public Builder AddRuntimeEnvironmentAssemblies()`: Adds the runtime assemblies of the executing application to the builder.
 
 ### Extension Methods
 
@@ -276,4 +277,3 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 - [System.Reflection.MetadataLoadContext](https://www.nuget.org/packages/System.Reflection.MetadataLoadContext/)
 - [Nerdbank.GitVersioning](https://www.nuget.org/packages/Nerdbank.GitVersioning/)
-
