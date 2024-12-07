@@ -11,10 +11,12 @@ on:
     inputs:
       private-release:
         description: 'Create a private release'
+        type: boolean
         required: false
         default: false
       draft-public-release:
         description: 'Create a draft public release'
+        type: boolean
         required: false
         default: false
 
@@ -43,7 +45,7 @@ jobs:
       contents: read
       packages: write
     needs: build-ubuntu
-    if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.private-release == 'true')
+    if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.private-release)
     runs-on: ubuntu-latest
     steps:
       - name: 🎢 Download Artifact
@@ -63,7 +65,7 @@ jobs:
       contents: write
       actions: read
     needs: build-ubuntu
-    if: (startsWith(github.ref, 'refs/heads/release/v') && (github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.draft-public-release == 'true'))
+    if: (startsWith(github.ref, 'refs/heads/release/v') && (github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.draft-public-release))
     runs-on: ubuntu-latest
     steps:
       - name: 🎢 Download Artifact
