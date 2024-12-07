@@ -67,6 +67,10 @@ jobs:
       - name: ⚒️ Build
         run: dotnet build --configuration ${{ inputs.configuration }} --no-restore --verbosity ${{ inputs.dotnet-verbosity }} /p:ContinuousIntegrationBuild=true
       - name: 🧪 Test
+        if: ${{ !inputs.upload-coverage }}
+        run: dotnet test --configuration ${{ inputs.configuration }} --no-restore --no-build --verbosity ${{ inputs.dotnet-verbosity }}
+      - name: 🧪 Test With Coverage
+        if: ${{ inputs.upload-coverage }}
         run: dotnet test --configuration ${{ inputs.configuration }} --no-restore --no-build --verbosity ${{ inputs.dotnet-verbosity }} /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
       - name: 🗣️ Print Public Release
         if: ${{ inputs.package }}
