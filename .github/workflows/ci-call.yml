@@ -1,4 +1,4 @@
-name: Workflow Call
+name: Workflow Base
 
 on:
   workflow_call:
@@ -56,7 +56,8 @@ jobs:
       - name: 🏭 Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ inputs.dotnet-version }}
+          global-json-file: ./global.json
+          # dotnet-version: ${{ inputs.dotnet-version }}
       - name: 🔢 Nerdbank.GitVersioning
         uses: dotnet/nbgv@v0.4.2
         with:
