@@ -11,7 +11,7 @@ public partial class SharpAssemblyResolver
     public class Builder
     {
         private readonly SharpResolverLogger _logger;
-        private readonly HashSet<string> _assemblyPaths = new(comparer: StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, string> _assemblyPaths = new(comparer: StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Builder"/> class.
@@ -28,7 +28,7 @@ public partial class SharpAssemblyResolver
         /// <returns>A new <see cref="SharpAssemblyResolver"/> instance.</returns>
         public SharpAssemblyResolver ToAssemblyResolver()
         {
-            return new SharpAssemblyResolver(_assemblyPaths);
+            return new SharpAssemblyResolver(_assemblyPaths.Values);
         }
 
         /// <summary>
@@ -203,7 +203,12 @@ public partial class SharpAssemblyResolver
                 return this;
             }
 
-            _assemblyPaths.Add(file.FullName);
+            if (_assemblyPaths.ContainsKey(file.Name))
+            {
+                _logger.OnWarning?.Invoke($"Overwriting existing assembly path: {file.FullName}.");
+            }
+
+            _assemblyPaths[file.Name] = file.FullName;
             _logger.OnInfo?.Invoke($"Added assembly: {file.FullName}.");
 
             return this;
