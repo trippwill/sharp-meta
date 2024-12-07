@@ -29,10 +29,10 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)strongname.snk</AssemblyOriginatorKeyFile>
 
-    <!-- <PackageProjectUrl>https://github.com/ORG/REPO</PackageProjectUrl> -->
+    <PackageProjectUrl>https://github.com/trippwill/sharp-meta</PackageProjectUrl>
     <Company>trippwill</Company>
-    <Authors>trippwill</Authors>
-    <Copyright>Â© trippwill. All rights reserved.</Copyright>
+    <Authors>The contributors of the SharpMeta project.</Authors>
+    <Copyright>© The contributors of the SharpMeta project. All rights reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
