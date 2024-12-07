@@ -59,6 +59,9 @@ jobs:
           GITHUB_USER: trippwill
 
   draft-public-release:
+    permissions:
+      contents: write
+      actions: read
     needs: build-ubuntu
     if: (startsWith(github.ref, 'refs/heads/release/v') && (github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.draft-public-release == 'true'))
     runs-on: ubuntu-latest
