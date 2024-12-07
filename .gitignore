@@ -358,3 +358,6 @@ MigrationBackup/
 
 # Analysis results
 *.sarif
+/docfx/api
+/docfx/_site
+/test/sharp-meta.Tests/coverage.opencover.xml

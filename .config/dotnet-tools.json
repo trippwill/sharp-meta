@@ -2,12 +2,6 @@
   "version": 1,
   "isRoot": true,
   "tools": {
-    "powershell": {
-      "version": "7.4.6",
-      "commands": [
-        "pwsh"
-      ]
-    },
     "dotnet-coverage": {
       "version": "17.12.6",
       "commands": [
@@ -19,6 +13,13 @@
       "commands": [
         "nbgv"
       ]
+    },
+    "docfx": {
+      "version": "2.78.2",
+      "commands": [
+        "docfx"
+      ],
+      "rollForward": false
     }
   }
 }
