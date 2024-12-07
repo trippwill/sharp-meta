@@ -22,9 +22,6 @@ concurrency:
   group: dotnet-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-
 jobs:
   build-ubuntu:
     uses: ./.github/workflows/ci-call.yml
@@ -56,6 +53,7 @@ jobs:
         env:
           AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NUGET_FEED: https://nuget.pkg.github.com/trippwill/index.json
+          GITHUB_USER: trippwill
 
   draft-public-release:
     needs: build-ubuntu
