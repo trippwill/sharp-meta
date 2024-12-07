@@ -39,6 +39,9 @@ jobs:
       runs-on: macos-latest
 
   private-release:
+    permissions:
+      contents: read
+      packages: write
     needs: build-ubuntu
     if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.private-release == 'true')
     runs-on: ubuntu-latest
