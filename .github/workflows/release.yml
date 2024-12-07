@@ -8,13 +8,6 @@ on:
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-# GitHub Packages Feed settings
-  GITHUB_FEED: https://nuget.pkg.github.com/trippwill/index.json
-  GITHUB_USER: trippwill
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-# Official NuGet Feed settings
-  NUGET_FEED: https://api.nuget.org/v3/index.json
-  NUGET_TOKEN: ${{ secrets.NUGET_PUSH_KEY }}
 
 jobs:
   release:
@@ -28,8 +21,12 @@ jobs:
           name: nupkg
           path: nupkg
           check_artifacts: true
-
       - name: 🌐 Push to GitHub Feed
-        run: dotnet nuget push ./nupkg/*.nupkg --source ${GITHUB_FEED} --skip-duplicate --api-key ${GITHUB_TOKEN}
+        run: dotnet nuget push ./nupkg/*.nupkg --source $NUGET_FEED --skip-duplicate --api-key $AUTH_TOKEN
+        env:
+          AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NUGET_FEED: https://nuget.pkg.github.com/trippwill/index.json
       - name: 🌐 Push to NuGet Feed
-        run: dotnet nuget push ./nupkg/*.nupkg --source ${NUGET_FEED} --skip-duplicate --api-key ${NUGET_TOKEN}
+        run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --skip-duplicate --api-key $AUTH_TOKEN
+        env:
+          AUTH_TOKEN: ${{ secrets.NUGET_PUSH_KEY }}

@@ -24,9 +24,6 @@ concurrency:
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-  GITHUB_FEED: https://nuget.pkg.github.com/trippwill/index.json
-  GITHUB_USER: trippwill
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   build-ubuntu:
@@ -55,7 +52,10 @@ jobs:
           name: nupkg
           path: ./nupkg
       - name: 🌐 Push to GitHub Feed
-        run: dotnet nuget push ./nupkg/*.nupkg --source ${{ env.GITHUB_FEED }} --skip-duplicate --api-key ${{ env.GITHUB_TOKEN }}
+        run: dotnet nuget push ./nupkg/*.nupkg --source $NUGET_FEED --skip-duplicate --api-key $AUTH_TOKEN
+        env:
+          AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NUGET_FEED: https://nuget.pkg.github.com/trippwill/index.json
 
   draft-public-release:
     needs: build-ubuntu
