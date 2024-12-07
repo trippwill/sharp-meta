@@ -7,10 +7,6 @@ on:
         description: The OS to run on
         default: ubuntu-latest
         required: false
-      dotnet-version:
-        description: The dotnet version specifier
-        default: 8.x.x
-        required: false
       dotnet-verbosity:
         type: string
         description: Verbosity of dotnet commands
@@ -53,7 +49,6 @@ jobs:
     uses: ./.github/workflows/ci-call.yml
     with:
       runs-on: ${{ github.event.inputs.runs-on }}
-      dotnet-version: ${{ github.event.inputs.dotnet-version }}
       dotnet-verbosity: ${{ github.event.inputs.dotnet-verbosity }}
       configuration:  ${{ github.event.inputs.configuration }}
       package: ${{ github.event.inputs.package == 'true' }}

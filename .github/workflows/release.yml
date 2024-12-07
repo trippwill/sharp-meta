@@ -6,11 +6,11 @@ on:
       - published
   workflow_dispatch:
 
-env:
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-
 jobs:
   release:
+    permissions:
+      contents: read
+      packages: write
     runs-on: ubuntu-latest
     steps:
       - name: 🎢 Download artifact
@@ -24,9 +24,11 @@ jobs:
       - name: 🌐 Push to GitHub Feed
         run: dotnet nuget push ./nupkg/*.nupkg --source $NUGET_FEED --skip-duplicate --api-key $AUTH_TOKEN
         env:
+          GITHUB_USER: trippwill
           AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NUGET_FEED: https://nuget.pkg.github.com/trippwill/index.json
       - name: 🌐 Push to NuGet Feed
         run: dotnet nuget push ./nupkg/*.nupkg --source https://api.nuget.org/v3/index.json --skip-duplicate --api-key $AUTH_TOKEN
         env:
           AUTH_TOKEN: ${{ secrets.NUGET_PUSH_KEY }}
+

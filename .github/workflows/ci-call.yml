@@ -8,11 +8,6 @@ on:
         type: string
         default: ubuntu-latest
         required: false
-      dotnet-version:
-        description: The dotnet version specifier
-        type: string
-        default: 8.x.x
-        required: false
       dotnet-verbosity:
         description: The log verbosity of dotnet commands
         type: string
@@ -57,7 +52,6 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           global-json-file: ./global.json
-          # dotnet-version: ${{ inputs.dotnet-version }}
       - name: 🔢 Nerdbank.GitVersioning
         uses: dotnet/nbgv@v0.4.2
         with:
