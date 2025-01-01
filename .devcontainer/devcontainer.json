@@ -1,20 +1,17 @@
 {
-  "name": "Dev space",
-  "dockerFile": "Dockerfile",
-  "settings": {
-    "terminal.integrated.shell.linux": "/usr/bin/pwsh"
-  },
-  "postCreateCommand": "./init.ps1 -InstallLocality machine",
-  "extensions": [
-    "ms-azure-devops.azure-pipelines",
-    "ms-dotnettools.csharp",
-    "k--kato.docomment",
-    "editorconfig.editorconfig",
-    "pflannery.vscode-versionlens",
-    "davidanson.vscode-markdownlint",
-    "dotjoshjohnson.xml",
-    "ms-vscode-remote.remote-containers",
-    "ms-azuretools.vscode-docker",
-    "ms-vscode.powershell"
-  ]
+	"image": "mcr.microsoft.com/devcontainers/universal:2",
+	"features": {
+		"ghcr.io/devcontainers/features/powershell:1": {
+			"version": "latest"
+		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"DavidAnson.vscode-markdownlint",
+				"github.vscode-github-actions",
+				"EditorConfig.EditorConfig"
+			]
+		}
+	}
 }
