@@ -2,12 +2,6 @@
   "version": 1,
   "isRoot": true,
   "tools": {
-    "dotnet-coverage": {
-      "version": "17.13.1",
-      "commands": [
-        "dotnet-coverage"
-      ]
-    },
     "nbgv": {
       "version": "3.7.112",
       "commands": [
