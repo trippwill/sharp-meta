@@ -22,6 +22,7 @@ Using `SharpAssemblyResolver.Builder.AddReferenceDirectories("path/to/target-fra
 - Log errors and information during the loading process.
 - Utilize `MetadataLoadContext` for inspecting assemblies without loading them into the main application domain.
 - Extension methods for `Type`, `PropertyInfo`, `MemberInfo`, and `CustomAttributeData` to facilitate inspecting type and attribute metadata.
+- Get XML documentation comments for types, properties, and members (requires XML documentation files to be present).
 
 ## Getting Started
 
