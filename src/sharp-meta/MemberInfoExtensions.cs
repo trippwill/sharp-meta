@@ -1,6 +1,9 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Concurrent;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Security;
+using System.Xml.Linq;
 
 namespace SharpMeta;
 
@@ -9,6 +12,9 @@ namespace SharpMeta;
 /// </summary>
 public static class MemberInfoExtensions
 {
+    // Add a private static dictionary to cache the XDocument objects for each assembly
+    private static readonly ConcurrentDictionary<string, XDocument?> XmlDocumentationCache = new();
+
     /// <summary>
     /// Tries to get the <see cref="CustomAttributeData"/> from the attribute data collection and attribute type.
     /// </summary>
@@ -205,5 +211,60 @@ public static class MemberInfoExtensions
             return attributeData;
         }
     }
-}
 
+    /// <summary>
+    /// Tries to get the XML documentation comments for the specified <see cref="MemberInfo"/>.
+    /// </summary>
+    /// <param name="memberInfo">The <see cref="MemberInfo"/> to get the documentation comments for.</param>
+    /// <param name="documentationComments">When this method returns, contains the XML documentation comments for the specified <see cref="MemberInfo"/>, if found; otherwise, <see langword="null"/>.</param>
+    /// <returns><see langword="true"/> if the XML documentation comments for the specified <see cref="MemberInfo"/> are found; otherwise, <see langword="false"/>.</returns>
+    public static bool TryGetDocComments(this MemberInfo memberInfo, [NotNullWhen(true)] out DocComments? documentationComments)
+    {
+        documentationComments = null;
+        if (memberInfo is null)
+            return false;
+
+        // Get the XML documentation file path
+        string xmlDocumentationPath = Path.ChangeExtension(memberInfo.Module.Assembly.Location, ".xml");
+
+        // Check the cache for the XDocument or load it from the file
+        XDocument? xmlDoc = XmlDocumentationCache.GetOrAdd(xmlDocumentationPath, path =>
+        {
+            try
+            {
+                return XDocument.Load(path);
+            }
+            catch (Exception ex) when (ex is SecurityException or FileNotFoundException or ArgumentNullException)
+            {
+                return null;
+            }
+        });
+
+        if (xmlDoc is null)
+            return false;
+
+        // Create the member name in the format used in the XML documentation file
+        string memberName = memberInfo is Type type
+            ? $"T:{type.FullName}"
+            : $"{memberInfo.MemberType.ToString()[0]}:{memberInfo.DeclaringType?.FullName}.{memberInfo.Name}";
+
+        // Find the documentation element for the member
+        XElement? memberElement = xmlDoc.Descendants("member")
+            .FirstOrDefault(e => e.Attribute("name")?.Value == memberName);
+
+        if (memberElement is not null)
+        {
+            string? summary = memberElement.Element("summary")?.Value.Trim();
+            string? returns = memberElement.Element("returns")?.Value.Trim();
+
+            documentationComments = new DocComments(
+                string.IsNullOrEmpty(summary) ? null : summary,
+                [.. memberElement.Elements("param").Select(e => (e.Attribute("name")?.Value ?? string.Empty, e.Value.Trim()))],
+                string.IsNullOrEmpty(returns) ? null : returns);
+
+            return true;
+        }
+
+        return false;
+    }
+}
