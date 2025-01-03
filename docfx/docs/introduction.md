@@ -265,13 +265,6 @@ public static bool TryGetConstructorArgument<T>(this CustomAttributeData customA
 
   Tries to retrieve the value of a constructor argument from the specified `CustomAttributeData` instance.
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a pull request or open an issue to discuss any changes. See [CONTRIBUTING](CONTRIBUTING.md).
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
