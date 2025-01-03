@@ -26,12 +26,28 @@ public class MemberInfoExtensionsTests
     }
 
     [Fact]
+    public void GetCustomAttributeData_FromMemberInfo_NotNull()
+    {
+        MethodInfo? member = typeof(SampleClass).GetMethod(nameof(SampleClass.SampleMethod));
+        CustomAttributeData? result = member!.GetCustomAttributeData<SampleAttribute>();
+        Assert.NotNull(result);
+    }
+
+    [Fact]
     public void TryGetCustomAttributeData_FromMemberInfoAndType_ShouldReturnTrue()
     {
         MethodInfo? member = typeof(SampleClass).GetMethod(nameof(SampleClass.SampleMethod));
         bool result = member!.TryGetCustomAttributeData(typeof(SampleAttribute), out CustomAttributeData? attributeData);
         Assert.True(result);
         Assert.NotNull(attributeData);
+    }
+
+    [Fact]
+    public void GetCustomAttributeData_FromMemberInfoAndType_NotNull()
+    {
+        MethodInfo? member = typeof(SampleClass).GetMethod(nameof(SampleClass.SampleMethod));
+        CustomAttributeData? result = member!.GetCustomAttributeData(typeof(SampleAttribute));
+        Assert.NotNull(result);
     }
 
     [Fact]
