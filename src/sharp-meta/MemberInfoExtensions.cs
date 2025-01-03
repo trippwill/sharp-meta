@@ -58,6 +58,20 @@ public static class MemberInfoExtensions
     }
 
     /// <summary>
+    /// Gets the <see cref="CustomAttributeData"/> for the specified <see cref="MemberInfo"/> and attribute type.
+    /// </summary>
+    /// <typeparam name="T">The type of the attribute.</typeparam>
+    /// <param name="memberInfo">The <see cref="MemberInfo"/> to get the custom attribute data for.</param>
+    /// <returns>The <see cref="CustomAttributeData"/> for the specified attribute type, if found; otherwise, <see langword="null"/>.</returns>
+    public static CustomAttributeData? GetCustomAttributeData<T>(this MemberInfo memberInfo)
+        where T : Attribute
+    {
+        return memberInfo.TryGetCustomAttributeData<T>(out CustomAttributeData? attributeData)
+            ? attributeData
+            : null;
+    }
+
+    /// <summary>
     /// Tries to get the <see cref="CustomAttributeData"/> for the specified <see cref="MemberInfo"/> and attribute type.
     /// </summary>
     /// <typeparam name="T">The type of the attribute.</typeparam>
@@ -70,6 +84,19 @@ public static class MemberInfoExtensions
         where T : Attribute
     {
         return memberInfo.TryGetCustomAttributeData(typeof(T), out attributeData);
+    }
+
+    /// <summary>
+    /// Gets the <see cref="CustomAttributeData"/> for the specified <see cref="MemberInfo"/> and attribute type.
+    /// </summary>
+    /// <param name="memberInfo">The <see cref="MemberInfo"/> to get the custom attribute data for.</param>
+    /// <param name="attributeType">The type of the attribute to get the custom attribute data for.</param>
+    /// <returns>The <see cref="CustomAttributeData"/> for the specified attribute type, if found; otherwise, <see langword="null"/>.</returns>
+    public static CustomAttributeData? GetCustomAttributeData(this MemberInfo memberInfo, Type attributeType)
+    {
+        return memberInfo.TryGetCustomAttributeData(attributeType, out CustomAttributeData? attributeData)
+            ? attributeData
+            : null;
     }
 
     /// <summary>
@@ -321,14 +348,6 @@ public static class MemberInfoExtensions
         }
 
         return false;
-
-        static string GetFullMemberName(MemberInfo memberInfo)
-        {
-            if (memberInfo.DeclaringType is null)
-                return memberInfo.Name;
-
-            return $"{GetFullMemberName(memberInfo.DeclaringType)}.{memberInfo.Name}";
-        }
     }
 
     /// <summary>
