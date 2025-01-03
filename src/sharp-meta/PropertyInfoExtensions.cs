@@ -1,7 +1,4 @@
-﻿// Copyright (c) Charles Willis. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace SharpMeta;
 
@@ -42,6 +39,8 @@ public static class PropertyInfoExtensions
     /// <returns><c><see langword="true"/></c> if the property is a nullable reference type; otherwise, <see langword="false"/>.</returns>
     public static bool IsNullableReference(this PropertyInfo property)
     {
+        ArgumentNullException.ThrowIfNull(property);
+
         NullabilityInfo nullabilityInfo = NullabilityContext.Create(property);
         return nullabilityInfo.ReadState == NullabilityState.Nullable;
     }

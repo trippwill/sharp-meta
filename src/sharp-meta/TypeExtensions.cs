@@ -1,7 +1,4 @@
-﻿// Copyright (c) Charles Willis. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace SharpMeta;
 
@@ -11,35 +8,47 @@ namespace SharpMeta;
 public static class TypeExtensions
 {
     /// <summary>
+    /// Determines whether the specified <see cref="Type"/> implements the interface <typeparamref name="T"/>.
+    /// </summary>
+    /// <typeparam name="T">The interface type to check for.</typeparam>
+    /// <param name="type">The <see cref="Type"/> to check.</param>
+    /// <returns><see langword="true"/> if the <see cref="Type"/> implements the interface <typeparamref name="T"/>; otherwise, <see langword="false"/>.</returns>
+    public static bool ImplementsInterface<T>(this Type type)
+    {
+        return type.ImplementsAnyInterface(typeof(T).FullName);
+    }
+
+    /// <summary>
     /// Determines whether the specified <see cref="Type"/> implements any of the specified interface names.
     /// </summary>
     /// <param name="type">The <see cref="Type"/> to check.</param>
-    /// <param name="interfaceNames">The names of the interfaces to check for.</param>
+    /// <param name="interfaceNames">The full names of the interfaces to check for.</param>
     /// <returns><see langword="true"/> if the <see cref="Type"/> implements any of the specified interface names; otherwise, <see langword="false"/>.</returns>
-    public static bool ImplementsAnyInterface(this Type type, params (string? Namespace, string Name)[] interfaceNames)
+    public static bool ImplementsAnyInterface(this Type type, params ReadOnlySpan<string?> interfaceNames)
     {
         ArgumentNullException.ThrowIfNull(type);
 
-        if (interfaceNames.Contains((type.Namespace, type.Name)))
-        {
-            return true;
-        }
+        string? typeName = type.FullName;
 
-        Type? test = type;
-        while (test is not null)
+        if (typeName is not null && interfaceNames.Contains(typeName))
+            return true;
+
+        return CheckInterfaces(type, interfaceNames);
+
+        static bool CheckInterfaces(Type? type, ReadOnlySpan<string?> interfaceNames)
         {
-            foreach (Type iface in test.GetInterfaces())
+            if (type is null)
+                return false;
+
+            foreach (Type iface in type.GetInterfaces())
             {
-                if (interfaceNames.Contains((iface.Namespace, iface.Name)))
-                {
+                string? ifaceName = iface.FullName;
+                if (ifaceName is not null && interfaceNames.Contains(ifaceName))
                     return true;
-                }
             }
 
-            test = test.BaseType;
+            return CheckInterfaces(type.BaseType, interfaceNames);
         }
-
-        return false;
     }
 
     /// <summary>
@@ -77,25 +86,21 @@ public static class TypeExtensions
         valueType = null;
 
         if (!type.IsGenericType)
-        {
             return false;
-        }
 
         Type? inspectedType = type;
 
         while (inspectedType is not null)
         {
-            if (IsProbableDictionaryImpl(inspectedType, out keyType, out valueType))
-            {
+            if (IsEnumerableOfKeyValuePair(inspectedType, out keyType, out valueType))
                 return true;
-            }
 
             inspectedType = inspectedType.BaseType;
         }
 
         return false;
 
-        static bool IsProbableDictionaryImpl(Type type, [NotNullWhen(true)] out Type? keyType, [NotNullWhen(true)] out Type? valueType)
+        static bool IsEnumerableOfKeyValuePair(Type type, [NotNullWhen(true)] out Type? keyType, [NotNullWhen(true)] out Type? valueType)
         {
             keyType = null;
             valueType = null;
@@ -104,11 +109,11 @@ public static class TypeExtensions
 
             foreach (Type iface in interfaces)
             {
-                if (iface.IsGenericType &&
-                    iface.GetGenericTypeDefinition().Name == typeof(IEnumerable<>).Name &&
-                    iface.GenericTypeArguments.SingleOrDefault() is Type pairType &&
-                    pairType.IsGenericType &&
-                    pairType.GetGenericTypeDefinition().Name == typeof(KeyValuePair<,>).Name)
+                if (iface.IsGenericType
+                    && iface.GetGenericTypeDefinition().Name == typeof(IEnumerable<>).Name
+                    && iface.GenericTypeArguments.SingleOrDefault() is Type pairType
+                    && pairType.IsGenericType
+                    && pairType.GetGenericTypeDefinition().Name == typeof(KeyValuePair<,>).Name)
                 {
                     Type[] args = pairType.GetGenericArguments();
                     keyType = args[0];
@@ -120,5 +125,29 @@ public static class TypeExtensions
 
             return false;
         }
+    }
+
+    /// <summary>
+    /// Determines whether the specified <see cref="Type"/> is a collection.
+    /// </summary>
+    /// <param name="type">The <see cref="Type"/> to check.</param>
+    /// <returns><see langword="true"/> if the <see cref="Type"/> is a collection; otherwise, <see langword="false"/>.</returns>
+    public static bool IsCollection(this Type type)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+
+        return type.GetInterface(nameof(System.Collections.IEnumerable)) is not null;
+    }
+
+    /// <summary>
+    /// Determines whether the specified <see cref="Type"/> is a delegate.
+    /// </summary>
+    /// <param name="type">The <see cref="Type"/> to check.</param>
+    /// <returns><see langword="true"/> if the <see cref="Type"/> is a delegate; otherwise, <see langword="false"/>.</returns>
+    public static bool IsDelegate(this Type type)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+
+        return typeof(Delegate).IsAssignableFrom(type);
     }
 }

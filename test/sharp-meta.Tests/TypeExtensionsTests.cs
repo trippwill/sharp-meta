@@ -39,11 +39,12 @@ public class TypeExtensionsTests
         Assert.Equal(typeof(int), keyType);
         Assert.Equal(typeof(string), valueType);
     }
+
     [Fact]
-    public void ImplementsAnyInterface_ShouldReturnTrue_WhenTypeImplementsSpecifiedInterface()
+    public void ImplementsInterface_ShouldReturnTrue_WhenTypeImplementsSpecifiedInterface()
     {
         Type type = typeof(List<int>);
-        bool result = type.ImplementsAnyInterface((typeof(IList).Namespace, nameof(IList)));
+        bool result = type.ImplementsInterface<IList>();
         Assert.True(result);
     }
 
@@ -51,7 +52,7 @@ public class TypeExtensionsTests
     public void ImplementsAnyInterface_ShouldReturnFalse_WhenTypeDoesNotImplementSpecifiedInterface()
     {
         Type type = typeof(List<int>);
-        bool result = type.ImplementsAnyInterface((typeof(IDisposable).Namespace, nameof(IDisposable)));
+        bool result = type.ImplementsInterface<IDisposable>();
         Assert.False(result);
     }
 
@@ -59,7 +60,7 @@ public class TypeExtensionsTests
     public void ImplementsAnyInterface_ShouldReturnTrue_WhenBaseTypeImplementsSpecifiedInterface()
     {
         Type type = typeof(Dictionary<int, string>);
-        bool result = type.ImplementsAnyInterface((typeof(IDictionary).Namespace, nameof(IDictionary)));
+        bool result = type.ImplementsInterface<IDictionary>();
         Assert.True(result);
     }
 
@@ -67,6 +68,6 @@ public class TypeExtensionsTests
     public void ImplementsAnyInterface_ShouldReturnFalse_WhenTypeIsNull()
     {
         Type? type = null;
-        Assert.Throws<ArgumentNullException>(() => type!.ImplementsAnyInterface((typeof(IEnumerable<>).Namespace, nameof(IEnumerable<int>))));
+        Assert.Throws<ArgumentNullException>(() => type!.ImplementsAnyInterface(typeof(IEnumerable<int>).FullName));
     }
 }
