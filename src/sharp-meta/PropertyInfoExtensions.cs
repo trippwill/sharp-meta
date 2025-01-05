@@ -7,7 +7,7 @@ namespace SharpMeta;
 /// </summary>
 public static class PropertyInfoExtensions
 {
-    private static readonly NullabilityInfoContext NullabilityContext = new();
+    private static readonly ThreadLocal<NullabilityInfoContext> NullabilityContext = new(() => new NullabilityInfoContext());
 
     /// <summary>
     /// Determines whether the specified property is nullable.
@@ -41,7 +41,9 @@ public static class PropertyInfoExtensions
     {
         ArgumentNullException.ThrowIfNull(property);
 
-        NullabilityInfo nullabilityInfo = NullabilityContext.Create(property);
+        NullabilityInfo nullabilityInfo = NullabilityContext.Value?.Create(property)
+            ?? throw new InvalidOperationException($"Failed creating nullability context for property {property.Name}.");
+
         return nullabilityInfo.ReadState == NullabilityState.Nullable;
     }
 }
