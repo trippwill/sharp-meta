@@ -49,6 +49,7 @@ public static class PropertyInfoExtensions
 
     /// <summary>
     /// Determines whether the specified property is marked with the <see cref="System.Runtime.CompilerServices.RequiredMemberAttribute"/>.
+    /// Such as for properties marked <see langword="required"/>.
     /// </summary>
     /// <param name="property">The property to check.</param>
     /// <returns><see langword="true"/> if the property is marked with the <see cref="System.Runtime.CompilerServices.RequiredMemberAttribute"/>; otherwise, <see langword="false"/>.</returns>
