@@ -46,4 +46,21 @@ public static class PropertyInfoExtensions
 
         return nullabilityInfo.ReadState == NullabilityState.Nullable;
     }
+
+    /// <summary>
+    /// Determines whether the specified property is marked with the <see cref="System.Runtime.CompilerServices.RequiredMemberAttribute"/>.
+    /// </summary>
+    /// <param name="property">The property to check.</param>
+    /// <returns><see langword="true"/> if the property is marked with the <see cref="System.Runtime.CompilerServices.RequiredMemberAttribute"/>; otherwise, <see langword="false"/>.</returns>
+    public static bool IsRequiredMember(this PropertyInfo property)
+    {
+        ArgumentNullException.ThrowIfNull(property);
+
+        if (property.TryGetCustomAttributeData<System.Runtime.CompilerServices.RequiredMemberAttribute>(out _))
+        {
+            return true;
+        }
+
+        return false;
+    }
 }
