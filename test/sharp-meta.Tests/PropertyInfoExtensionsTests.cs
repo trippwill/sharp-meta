@@ -12,6 +12,12 @@ public class PropertyInfoExtensionsTests
         public string? NullableReferenceType { get; set; }
     }
 
+    private class RequiredMemberTestClass
+    {
+        public required string RequiredProperty { get; set; } = string.Empty;
+        public string NonRequiredProperty { get; set; } = string.Empty;
+    }
+
     public class PropertyInfoExtensionsThreadSafetyTests
     {
         private class TestClass
@@ -84,6 +90,22 @@ public class PropertyInfoExtensionsTests
     {
         System.Reflection.PropertyInfo? property = typeof(TestClass).GetProperty(nameof(TestClass.NonNullableReferenceType));
         bool result = property!.IsNullableReference();
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsRequiredMember_ShouldReturnTrue_ForRequiredMember()
+    {
+        System.Reflection.PropertyInfo? property = typeof(RequiredMemberTestClass).GetProperty(nameof(RequiredMemberTestClass.RequiredProperty));
+        bool result = property!.IsRequiredMember();
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsRequiredMember_ShouldReturnFalse_ForNonRequiredMember()
+    {
+        System.Reflection.PropertyInfo? property = typeof(RequiredMemberTestClass).GetProperty(nameof(RequiredMemberTestClass.NonRequiredProperty));
+        bool result = property!.IsRequiredMember();
         Assert.False(result);
     }
 }
