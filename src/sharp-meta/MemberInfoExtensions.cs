@@ -309,6 +309,7 @@ public static class MemberInfoExtensions
         {
             MethodInfo method => GetMethodDocId(method, declaringTypeName),
             ConstructorInfo ctor => $"M:{declaringTypeName.GetFullName(NameStyle.DocId)}.#ctor{GetMethodParameters(ctor)}",
+            PropertyInfo property when property.GetIndexParameters().Length > 0 => throw new NotSupportedException("Indexer properties are not supported."),
             PropertyInfo property => GetPropertyDocId(property, declaringTypeName),
             FieldInfo field => $"F:{declaringTypeName.GetFullName(NameStyle.DocId)}.{ConformItemName(field.Name)}",
             EventInfo @event => $"E:{declaringTypeName.GetFullName(NameStyle.DocId)}.{ConformItemName(@event.Name)}",
@@ -332,7 +333,7 @@ public static class MemberInfoExtensions
             sb.Append(GetMethodParameters(method));
             if (method.Name is "op_Implicit" or "op_Explicit")
             {
-                sb.Append('~').Append(GetParameterTypeName(method.ReturnType));
+                sb.Append('~').Append(TypeNameInfo.From(method.ReturnType).GetFullName(NameStyle.DocIdParameter));
             }
 
             return sb.ToString();
@@ -345,30 +346,12 @@ public static class MemberInfoExtensions
                 .Append('.')
                 .Append(ConformItemName(property.Name));
 
-            if (property.GetIndexParameters().Length > 0)
-            {
-                sb.Append('(')
-                  .Append(string.Join(",", property.GetIndexParameters()
-                    .Select(p => GetParameterTypeName(p.ParameterType))))
-                  .Append(')');
-            }
             return sb.ToString();
         }
 
         static string ConformItemName(string name)
         {
             return name.Replace('.', '#');
-        }
-
-        static string ConformTypeShortName(Type type)
-        {
-            string typeName = type.Name;
-            if (type.IsGenericType)
-            {
-                typeName = typeName[..typeName.IndexOf('`')];
-                typeName = $"{typeName}`{type.GetGenericArguments().Length}";
-            }
-            return typeName.Replace('+', '.');
         }
 
         static string GetMethodParameters(MethodBase method)
@@ -378,46 +361,6 @@ public static class MemberInfoExtensions
                 return string.Empty;
 
             return $"({string.Join(",", parameters.Select(p => TypeNameInfo.From(p.ParameterType).GetFullName(NameStyle.DocIdParameter)))})";
-        }
-
-        static string GetParameterTypeName(Type type)
-        {
-            if (type.IsByRef)
-                return $"{GetParameterTypeName(type.GetElementType()!)}@";
-
-            if (type.IsPointer)
-                return $"{GetParameterTypeName(type.GetElementType()!)}*";
-
-            if (type.IsArray)
-            {
-                if (type.GetArrayRank() == 1)
-                {
-                    return $"{GetParameterTypeName(type.GetElementType()!)}[]";
-                }
-
-                var arrayDimensions = new List<string>();
-                for (int i = 0; i < type.GetArrayRank(); i++)
-                {
-                    arrayDimensions.Add("0:");
-                }
-
-                return $"{GetParameterTypeName(type.GetElementType()!)}[{string.Join(",", arrayDimensions)}]";
-            }
-
-            if (type.IsGenericParameter)
-            {
-                return $"``{type.GenericParameterPosition}";
-            }
-
-            if (type.IsGenericType)
-            {
-                Type genericType = type.GetGenericTypeDefinition();
-                string typeName = $"{genericType.Namespace}.{ConformTypeShortName(genericType)}";
-                string genericArgs = string.Join(",", type.GetGenericArguments().Select((_, index) => $"`{index}"));
-                return $"{typeName}`{type.GetGenericArguments().Length}[{genericArgs}]";
-            }
-
-            return $"{type.Namespace}.{ConformTypeShortName(type)}";
         }
     }
 }

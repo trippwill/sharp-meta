@@ -81,8 +81,13 @@ public class Parse
     }
 }
 
-public class MaxDepthTests
+public class MaxDepthTests : IDisposable
 {
+    public void Dispose()
+    {
+        DocComments.MaxDepth = 24;
+    }
+
     [Fact]
     public void ShouldBeSettable()
     {

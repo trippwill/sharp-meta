@@ -159,7 +159,7 @@ public abstract record TypeNameInfo(string ShortName)
         {
             NameStyle.Framework => this.FullName,
             NameStyle.DocId => $"{FormatFullName(style, StripGenericArguments(this.FullName))}`{this.Arity}",
-            NameStyle.DocIdParameter => $"{FormatFullName(style, StripGenericArguments(this.FullName))}{{{string.Join(",", this.TypeArguments.Select(t => t.GetFullName(NameStyle.DocId)))}}}",
+            NameStyle.DocIdParameter => $"{FormatFullName(style, StripGenericArguments(this.FullName))}{{{string.Join(",", this.TypeArguments.Select(t => t.GetFullName(NameStyle.DocIdParameter)))}}}",
             _ => throw new NotSupportedException($"Style not supported: {style}")
         };
     }
@@ -189,6 +189,27 @@ public abstract record TypeNameInfo(string ShortName)
             NameStyle.DocIdParameter => $"{FormatFullName(style, StripGenericArguments(this.FullName))}{{{string.Join(",", this.TypeArguments.Select(t => t.GetFullName(NameStyle.DocId)))}}}",
             _ => throw new NotSupportedException($"Style not supported: {style}")
         };
+    }
+
+    /// <summary>
+    /// Represents a generic parameter type name.
+    /// </summary>
+    /// <param name="ShortName">The type name of the generic parameter.</param>
+    /// <param name="Position">The position of the generic parameter.</param>
+    public record GenericParameter(string ShortName, int Position) : TypeNameInfo(ShortName)
+    {
+        /// <inheritdoc />
+        protected override string GetShortNameCore(NameStyle style) => style
+            switch
+        {
+            NameStyle.Framework => this.ShortName,
+            NameStyle.DocId => $"``{this.Position}",
+            NameStyle.DocIdParameter => $"``{this.Position}",
+            _ => throw new NotSupportedException($"Style not supported: {style}")
+        };
+
+        /// <inheritdoc />
+        protected override string GetFullNameCore(NameStyle style) => this.GetShortNameCore(style);
     }
 
     /// <summary>
@@ -281,26 +302,6 @@ public abstract record TypeNameInfo(string ShortName)
             NameStyle.DocId or NameStyle.DocIdParameter => $"{this.ElementType.GetFullName(style)}@",
             _ => throw new NotSupportedException($"Style not supported: {style}")
         };
-    }
-
-    /// <summary>
-    /// Represents a generic parameter type name.
-    /// </summary>
-    /// <param name="ShortName">The type name of the generic parameter.</param>
-    /// <param name="Position">The position of the generic parameter.</param>
-    public record GenericParameter(string ShortName, int Position) : TypeNameInfo(ShortName)
-    {
-        /// <inheritdoc />
-        protected override string GetShortNameCore(NameStyle style) => style
-            switch
-        {
-            NameStyle.Framework => this.ShortName,
-            NameStyle.DocId or NameStyle.DocIdParameter => $"``{this.Position}",
-            _ => throw new NotSupportedException($"Style not supported: {style}")
-        };
-
-        /// <inheritdoc />
-        protected override string GetFullNameCore(NameStyle style) => this.GetShortNameCore(style);
     }
 
     /// <summary>
