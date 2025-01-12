@@ -10,7 +10,7 @@ internal class DepthScope(int maxDepth)
         using (_lock.GetReleaser())
         {
             if (++_depth >= maxDepth)
-                throw new InvalidOperationException("Depth exceeds maximum.");
+                throw new InvalidOperationException($"Depth {_depth} exceeds maximum {maxDepth}.");
         }
     }
 

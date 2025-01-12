@@ -7,14 +7,19 @@ namespace Tests.DocCommentsTests;
 [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test Code")]
 public class Parse
 {
+    static Parse()
+    {
+        DocComments.MaxDepth = 24;
+    }
+
     [Fact]
-    public void Parse_ShouldThrow_WhenMemberInfoIsNull()
+    public void ShouldThrow_WhenMemberInfoIsNull()
     {
         Assert.Throws<ArgumentNullException>(() => DocComments.Parse(null!));
     }
 
     [Fact]
-    public void Parse_ShouldReturnNull_WhenXmlDocumentationIsNotFound()
+    public void ShouldReturnNull_WhenXmlDocumentationIsNotFound()
     {
         var memberInfo = typeof(TestClass).GetMethod(nameof(TestClass.MethodWithoutXmlDocs));
         var result = DocComments.Parse(memberInfo!);
@@ -22,7 +27,7 @@ public class Parse
     }
 
     [Fact]
-    public void Parse_ShouldReturnDocComments_WhenXmlDocumentationIsFound()
+    public void ShouldReturnDocComments_WhenXmlDocumentationIsFound()
     {
         var memberInfo = typeof(TestClass).GetMethod(nameof(TestClass.MethodWithXmlDocs));
         var result = DocComments.Parse(memberInfo!);
@@ -36,7 +41,7 @@ public class Parse
     }
 
     [Fact]
-    public void Parse_ShouldHandleInheritdoc()
+    public void ShouldHandleInheritdoc()
     {
         var memberInfo = typeof(DerivedClass).GetMethod(nameof(DerivedClass.MethodWithInheritdoc));
         var result = DocComments.Parse(memberInfo!);
@@ -46,7 +51,7 @@ public class Parse
     }
 
     [Fact]
-    public void Parse_ShouldHandleMultipleExamples()
+    public void ShouldHandleMultipleExamples()
     {
         var memberInfo = typeof(TestClass).GetMethod(nameof(TestClass.MethodWithMultipleExamples));
         var result = DocComments.Parse(memberInfo!);
@@ -54,12 +59,50 @@ public class Parse
         Assert.Contains("This is the first example.", result!.Examples);
         Assert.Contains("This is the second example.", result.Examples);
     }
+
+    [Fact]
+    public void ShouldHandleInterfaceInheritance()
+    {
+        var memberInfo = typeof(ImplementingClass).GetMethod(nameof(ImplementingClass.InterfaceMethod));
+        var result = DocComments.Parse(memberInfo!);
+        Assert.NotNull(result);
+        Assert.Equal("Interface method summary.", result!.Summary);
+        Assert.Equal("Interface method remark.", result.Remarks);
+    }
+
+    [Fact]
+    public void ShouldHandleInheritdocWithCref()
+    {
+        var memberInfo = typeof(DerivedClassWithCref).GetMethod(nameof(DerivedClassWithCref.MethodWithInheritdocCref));
+        var result = DocComments.Parse(memberInfo!);
+        Assert.NotNull(result);
+        Assert.Equal("Referenced summary.", result!.Summary);
+        Assert.Equal("Referenced remark.", result.Remarks);
+    }
+}
+
+public class MaxDepthTests
+{
+    [Fact]
+    public void ShouldBeSettable()
+    {
+        DocComments.MaxDepth = 10;
+        Assert.Equal(10, DocComments.MaxDepth);
+    }
+
+    [Fact]
+    public void ShouldThrow_WhenMaxDepthExceeded()
+    {
+        DocComments.MaxDepth = 1;
+        var memberInfo = typeof(TestClass).GetMethod(nameof(TestClass.MethodWithXmlDocs));
+        Assert.Throws<InvalidOperationException>(() => DocComments.Parse(memberInfo!));
+    }
 }
 
 public class Normalize
 {
     [Fact]
-    public void Normalize_ShouldNormalizeStringValues()
+    public void ShouldNormalizeStringValues()
     {
         var docComments = new DocComments(
             "<para>This is a summary.</para>",
@@ -113,20 +156,28 @@ internal class DerivedClass : BaseClass
     public override void MethodWithInheritdoc() { }
 }
 
-public class MaxDepthTests
+internal interface ITestInterface
 {
-    [Fact]
-    public void MaxDepth_ShouldBeSettable()
-    {
-        DocComments.MaxDepth = 10;
-        Assert.Equal(10, DocComments.MaxDepth);
-    }
+    /// <summary>Interface method summary.</summary>
+    /// <remarks>Interface method remark.</remarks>
+    void InterfaceMethod();
+}
 
-    [Fact]
-    public void Parse_ShouldThrow_WhenMaxDepthExceeded()
-    {
-        DocComments.MaxDepth = 1;
-        var memberInfo = typeof(TestClass).GetMethod(nameof(TestClass.MethodWithXmlDocs));
-        Assert.Throws<InvalidOperationException>(() => DocComments.Parse(memberInfo!));
-    }
+internal class ImplementingClass : ITestInterface
+{
+    /// <inheritdoc />
+    public void InterfaceMethod() { }
+}
+
+internal class BaseClassWithCref
+{
+    /// <summary>Referenced summary.</summary>
+    /// <remarks>Referenced remark.</remarks>
+    public void ReferencedMethod() { }
+}
+
+internal class DerivedClassWithCref
+{
+    /// <inheritdoc cref="BaseClassWithCref.ReferencedMethod" />
+    public void MethodWithInheritdocCref() { }
 }
