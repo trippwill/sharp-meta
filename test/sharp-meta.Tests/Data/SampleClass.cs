@@ -1,4 +1,4 @@
-﻿namespace SharpMeta.Tests;
+﻿namespace Tests.Data;
 
 /// <summary>
 /// A sample class.
@@ -36,4 +36,6 @@ public class SampleClass
     /// </summary>
     [Obsolete("This method is obsolete")]
     public void ObsoleteMethod() { }
+
+    public object MethodWithoutDocComments() => throw new NotImplementedException();
 }

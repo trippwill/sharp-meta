@@ -1,13 +1,14 @@
 using System.Reflection;
+using SharpMeta;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace SharpMeta.Tests;
+namespace Tests.SharpAssemblyResolverTests;
 
-public class SharpAssemblyResolverTests(ITestOutputHelper outputHelper)
+public class CreateBuilder
 {
     [Fact]
-    public void CreateBuilder_ShouldReturnBuilderInstance()
+    public void ShouldReturnBuilderInstance()
     {
         // Act
         SharpAssemblyResolver.Builder builder = SharpAssemblyResolver.CreateBuilder();
@@ -16,20 +17,25 @@ public class SharpAssemblyResolverTests(ITestOutputHelper outputHelper)
         Assert.NotNull(builder);
         Assert.IsType<SharpAssemblyResolver.Builder>(builder);
     }
+}
 
+public class CreateExecutingAssemblyLoadContext
+{
     [Fact]
-    public void CreateExecutingAssemblyLoadContext_ShouldReturnMetadataLoadContext()
+    public void ShouldReturnMetadataLoadContext()
     {
         // Act
         MetadataLoadContext loadContext = SharpAssemblyResolver.CreateExecutingAssemblyLoadContext();
-
         // Assert
         Assert.NotNull(loadContext);
         Assert.IsType<MetadataLoadContext>(loadContext);
     }
+}
 
+public class ImplicitConversion
+{
     [Fact]
-    public void ImplicitConversion_FromBuilderToSharpAssemblyResolver_ShouldReturnSharpAssemblyResolver()
+    public void FromBuilderToSharpAssemblyResolver_ShouldReturnSharpAssemblyResolver()
     {
         // Arrange
         SharpAssemblyResolver.Builder builder = SharpAssemblyResolver.CreateBuilder();
@@ -43,7 +49,7 @@ public class SharpAssemblyResolverTests(ITestOutputHelper outputHelper)
     }
 
     [Fact]
-    public void ImplicitConversion_FromSharpAssemblyResolverToMetadataLoadContext_ShouldReturnMetadataLoadContext()
+    public void FromSharpAssemblyResolverToMetadataLoadContext_ShouldReturnMetadataLoadContext()
     {
         // Arrange
         SharpAssemblyResolver.Builder builder = SharpAssemblyResolver
@@ -58,9 +64,12 @@ public class SharpAssemblyResolverTests(ITestOutputHelper outputHelper)
         Assert.NotNull(loadContext);
         Assert.IsType<MetadataLoadContext>(loadContext);
     }
+}
 
+public class ToMetadataLoadContext
+{
     [Fact]
-    public void ToMetadataLoadContext_ShouldReturnMetadataLoadContext()
+    public void ShouldReturnMetadataLoadContext()
     {
         // Arrange
         SharpAssemblyResolver.Builder builder = SharpAssemblyResolver
@@ -75,9 +84,12 @@ public class SharpAssemblyResolverTests(ITestOutputHelper outputHelper)
         Assert.NotNull(loadContext);
         Assert.IsType<MetadataLoadContext>(loadContext);
     }
+}
 
+public class LoadAssembly(ITestOutputHelper outputHelper)
+{
     [Fact]
-    public void LoadAssembly_ShouldLoadAssembly()
+    public void ShouldLoadAssembly()
     {
         var referenceFiles = new FileInfo[] { new(Assembly.GetExecutingAssembly().Location) };
         var referenceDirectories = new DirectoryInfo[] { new(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!) };

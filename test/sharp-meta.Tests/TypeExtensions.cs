@@ -1,9 +1,10 @@
 ﻿using System.Collections;
+using SharpMeta;
 using Xunit;
 
-namespace SharpMeta.Tests;
+namespace Tests.TypeExtensionsTest;
 
-public class TypeExtensionsTests
+public class TryUnwrapNullable
 {
     [Fact]
     public void TryUnwrapNullable_ShouldReturnTrue_WhenNullableType()
@@ -29,7 +30,10 @@ public class TypeExtensionsTests
         Type? type = null;
         Assert.Throws<ArgumentNullException>(() => type!.TryUnwrapNullable(out _));
     }
+}
 
+public class IsProbableDictionary
+{
     [Fact]
     public void IsProbableDictionary_ShouldReturnTrue()
     {
@@ -39,7 +43,10 @@ public class TypeExtensionsTests
         Assert.Equal(typeof(int), keyType);
         Assert.Equal(typeof(string), valueType);
     }
+}
 
+public class ImplementsInterface
+{
     [Fact]
     public void ImplementsInterface_ShouldReturnTrue_WhenTypeImplementsSpecifiedInterface()
     {
@@ -47,7 +54,10 @@ public class TypeExtensionsTests
         bool result = type.ImplementsInterface<IList>();
         Assert.True(result);
     }
+}
 
+public class ImplementsAnyInterface
+{
     [Fact]
     public void ImplementsAnyInterface_ShouldReturnFalse_WhenTypeDoesNotImplementSpecifiedInterface()
     {

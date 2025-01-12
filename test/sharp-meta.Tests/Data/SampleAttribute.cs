@@ -1,4 +1,4 @@
-﻿namespace SharpMeta.Tests;
+﻿namespace Tests.Data;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Property)]
 public class SampleAttribute(int id) : Attribute
