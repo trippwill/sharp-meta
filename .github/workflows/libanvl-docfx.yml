@@ -20,4 +20,5 @@ jobs:
     uses: libanvl/ci/.github/workflows/dotnet-docfx.yml@main
     with:
       environment: 'github-pages'
+      dotnet-version: 'global'
     secrets: inherit
