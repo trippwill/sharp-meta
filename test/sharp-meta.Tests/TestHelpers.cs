@@ -1,8 +1,9 @@
-﻿using Xunit.Abstractions;
+﻿using SharpMeta;
+using Xunit.Abstractions;
 
-namespace SharpMeta.Tests;
+namespace Tests;
 
-internal static class TestOutputHelperExtensions
+internal static class TestHelpers
 {
     public static SharpResolverLogger ToSharpResolverLogger(this ITestOutputHelper outputHelper)
     {

@@ -1,16 +1,17 @@
 using System.Reflection;
-using MyNamespace;
+using SharpMeta;
+using Tests.Data;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace SharpMeta.Tests;
+namespace Tests.MemberInfoExtensionsTests;
 
-public class GetDocIdTests
+public class GetDocId
 {
     private readonly ITestOutputHelper _output;
     private static System.Xml.XmlDocument? _xmlDoc;
 
-    public GetDocIdTests(ITestOutputHelper output)
+    public GetDocId(ITestOutputHelper output)
     {
         _output = output;
         LoadXmlDoc();
@@ -121,6 +122,19 @@ public class GetDocIdTests
         Assert.Equal(expected, actual);
     }
 
+    [Fact]
+    public void GetDocId_ShouldReturnCorrectDocId_ForGenericType()
+    {
+        // Arrange
+        var memberInfo = typeof(TestClass<>).GetMethod(nameof(TestClass<object>.GenericMethod));
+
+        // Act
+        var docId = memberInfo!.GetDocId();
+
+        // Assert
+        Assert.Equal("M:Tests.MemberInfoExtensionsTests.GetDocId.TestClass`1.GenericMethod``1(System.String)", docId);
+    }
+
     public static TheoryData<Type, string, string> GetDocId_ShouldReturnExpectedName_Data()
     {
         return new TheoryData<Type, string, string>
@@ -144,5 +158,10 @@ public class GetDocIdTests
             {typeof(MyGenericClass<>), nameof(MyGenericClass<int>.SomeMethod), MyGenericClass<int>.SomeMethodId },
             {typeof(MyGenericClass<>), nameof(MyGenericClass<int>.AnotherMethod), MyGenericClass<int>.AnotherMethodId },
         };
+    }
+
+    internal class TestClass<T>
+    {
+        public void GenericMethod<U>(string param) { }
     }
 }

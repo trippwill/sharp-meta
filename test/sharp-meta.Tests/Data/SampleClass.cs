@@ -1,4 +1,4 @@
-﻿namespace SharpMeta.Tests;
+﻿namespace Tests.Data;
 
 /// <summary>
 /// A sample class.

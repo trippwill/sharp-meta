@@ -14,11 +14,6 @@ namespace SharpMeta;
 public static class MemberInfoExtensions
 {
     /// <summary>
-    /// XDocument by file path cache.
-    /// </summary>
-    private static readonly ConcurrentDictionary<string, XDocument?> XmlDocumentationCache = new(StringComparer.OrdinalIgnoreCase);
-
-    /// <summary>
     /// Tries to get the <see cref="CustomAttributeData"/> from the attribute data collection and attribute type.
     /// </summary>
     /// <typeparam name="T">The type of the attribute.</typeparam>
@@ -270,84 +265,22 @@ public static class MemberInfoExtensions
     /// Gets the documentation comments for the specified <see cref="MemberInfo"/>.
     /// </summary>
     /// <param name="memberInfo">The <see cref="MemberInfo"/> to get the documentation comments for.</param>
-    /// <returns>The <see cref="DocComments"/> for the specified <see cref="MemberInfo"/>, if found; otherwise, <see langword="null"/>.</returns>
+    /// <returns>A <see cref="DocComments"/> instance containing the documentation comments, if found; otherwise, <see langword="null"/>.</returns>
     public static DocComments? GetDocComments(this MemberInfo memberInfo)
     {
-        return memberInfo.TryGetDocComments(out DocComments? docComments)
-            ? docComments
-            : null;
+        return DocComments.Parse(memberInfo);
     }
 
     /// <summary>
-    /// Tries to get the XML documentation comments for the specified <see cref="MemberInfo"/>.
+    /// Tries to get the documentation comments for the specified <see cref="MemberInfo"/>.
     /// </summary>
     /// <param name="memberInfo">The <see cref="MemberInfo"/> to get the documentation comments for.</param>
-    /// <param name="documentationComments">When this method returns, contains the XML documentation comments for the specified <see cref="MemberInfo"/>, if found; otherwise, <see langword="null"/>.</param>
-    /// <returns><see langword="true"/> if the XML documentation comments for the specified <see cref="MemberInfo"/> are found; otherwise, <see langword="false"/>.</returns>
-    public static bool TryGetDocComments(this MemberInfo memberInfo, [NotNullWhen(true)] out DocComments? documentationComments)
+    /// <param name="docComments">When this method returns, contains the <see cref="DocComments"/> for the specified <see cref="MemberInfo"/>, if found; otherwise, <see langword="null"/>.</param>
+    /// <returns><see langword="true"/> if the documentation comments for the specified <see cref="MemberInfo"/> are found; otherwise, <see langword="false"/>.</returns>
+    public static bool TryGetDocComments(this MemberInfo memberInfo, [NotNullWhen(true)] out DocComments? docComments)
     {
-        documentationComments = null;
-        if (memberInfo is null)
-            return false;
-
-        // Get the XML documentation file path
-        string xmlDocumentationPath = Path.ChangeExtension(memberInfo.Module.Assembly.Location, ".xml");
-
-        // Check the cache for the XDocument or load it from the file
-        XDocument? xmlDoc = XmlDocumentationCache.GetOrAdd(xmlDocumentationPath, path =>
-        {
-            try
-            {
-                return XDocument.Load(path);
-            }
-            catch (Exception ex) when (ex is SecurityException or FileNotFoundException or ArgumentNullException)
-            {
-                return null;
-            }
-        });
-
-        if (xmlDoc is null)
-            return false;
-
-        // Create the member name in the format used in the XML documentation file
-        string memberName = memberInfo.GetDocId();
-
-        // Find the documentation element for the member
-        XElement? memberElement = xmlDoc.Descendants("member")
-            .FirstOrDefault(e => e.Attribute("name")?.Value == memberName);
-
-        if (memberElement is not null)
-        {
-            string? summary = memberElement.Element("summary")?.Value.Trim();
-            string? returns = memberElement.Element("returns")?.Value.Trim();
-            string? remarks = memberElement.Element("remarks")?.Value.Trim();
-            string? example = memberElement.Element("example")?.Value.Trim();
-
-            var parameters = memberElement.Elements("param")
-                .Select(e => (e.Attribute("name")?.Value ?? string.Empty, e.Value.Trim()))
-                .ToImmutableArray();
-
-            var exceptions = memberElement.Elements("exception")
-                .Select(e => (e.Attribute("cref")?.Value.Split(':').ElementAtOrDefault(1) ?? string.Empty, e.Value.Trim()))
-                .ToImmutableArray();
-
-            var typeParameters = memberElement.Elements("typeparam")
-                .Select(e => (e.Attribute("name")?.Value ?? string.Empty, e.Value.Trim()))
-                .ToImmutableArray();
-
-            documentationComments = new DocComments(
-                string.IsNullOrEmpty(summary) ? null : summary,
-                string.IsNullOrEmpty(remarks) ? null : remarks,
-                string.IsNullOrEmpty(example) ? null : example,
-                string.IsNullOrEmpty(returns) ? null : returns,
-                parameters,
-                typeParameters,
-                exceptions);
-
-            return true;
-        }
-
-        return false;
+        docComments = memberInfo.GetDocComments();
+        return docComments is not null;
     }
 
     /// <summary>
@@ -487,5 +420,5 @@ public static class MemberInfoExtensions
             return $"{type.Namespace}.{ConformTypeShortName(type)}";
         }
     }
-
 }
+

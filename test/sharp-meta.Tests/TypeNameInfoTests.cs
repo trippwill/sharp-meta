@@ -1,17 +1,18 @@
+using SharpMeta;
 using Xunit;
 
-namespace SharpMeta.Tests;
+namespace Tests.TypeNameInfoTests;
 
-public class TypeNameInfoTests
+public class From
 {
     [Fact]
-    public void From_NullType_ThrowsArgumentNullException()
+    public void NullType_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => TypeNameInfo.From(null!));
     }
 
     [Fact]
-    public void From_GenericType_ReturnsOpenGeneric()
+    public void GenericType_ReturnsOpenGeneric()
     {
         Type type = typeof(Dictionary<,>);
         var typeNameInfo = TypeNameInfo.From(type);
@@ -22,7 +23,7 @@ public class TypeNameInfoTests
     }
 
     [Fact]
-    public void From_ClosedGenericType_ReturnsClosedGeneric()
+    public void ClosedGenericType_ReturnsClosedGeneric()
     {
         Type type = typeof(Dictionary<string, int>);
         var typeNameInfo = TypeNameInfo.From(type);
@@ -33,7 +34,7 @@ public class TypeNameInfoTests
     }
 
     [Fact]
-    public void From_ArrayType_ReturnsArray()
+    public void ArrayType_ReturnsArray()
     {
         Type type = typeof(int[]);
         var typeNameInfo = TypeNameInfo.From(type);
@@ -44,7 +45,7 @@ public class TypeNameInfoTests
     }
 
     [Fact]
-    public void From_ByRefType_ReturnsByRef()
+    public void ByRefType_ReturnsByRef()
     {
         Type type = typeof(int).MakeByRefType();
         var typeNameInfo = TypeNameInfo.From(type);
@@ -55,7 +56,7 @@ public class TypeNameInfoTests
     }
 
     [Fact]
-    public void From_PointerType_ReturnsPointer()
+    public void PointerType_ReturnsPointer()
     {
         Type type = typeof(int).MakePointerType();
         var typeNameInfo = TypeNameInfo.From(type);
@@ -66,7 +67,7 @@ public class TypeNameInfoTests
     }
 
     [Fact]
-    public void From_GenericParameterType_ReturnsGenericParameter()
+    public void GenericParameterType_ReturnsGenericParameter()
     {
         Type type = typeof(Dictionary<,>).GetGenericArguments()[0];
         var typeNameInfo = TypeNameInfo.From(type);
@@ -76,7 +77,7 @@ public class TypeNameInfoTests
     }
 
     [Fact]
-    public void From_DynamicType_ReturnsDynamic()
+    public void DynamicType_ReturnsDynamic()
     {
         var x = new { Hello = "hello" };
         Type type = x.GetType();
@@ -87,7 +88,7 @@ public class TypeNameInfoTests
     }
 
     [Fact]
-    public void From_StandardType_ReturnsStandard()
+    public void StandardType_ReturnsStandard()
     {
         Type type = typeof(int);
         var typeNameInfo = TypeNameInfo.From(type);
@@ -96,7 +97,10 @@ public class TypeNameInfoTests
         Assert.Equal(type.FullName, ((TypeNameInfo.Standard)typeNameInfo).FullName);
         Assert.Equal(type.Name, typeNameInfo.ShortName);
     }
+}
 
+public class GetShortName
+{
     [Theory]
     [InlineData(typeof(int), NameStyle.Framework, "Int32")]
     [InlineData(typeof(int), NameStyle.DocId, "Int32")]
@@ -112,7 +116,7 @@ public class TypeNameInfoTests
     [InlineData(typeof(int[,]), NameStyle.DocId, "Int32[0:,0:]")]
     [InlineData(typeof(object), NameStyle.Framework, "Object")]
     [InlineData(typeof(object), NameStyle.DocId, "Object")]
-    public void GetShortName_ReturnsExpected(Type type, NameStyle style, string expected)
+    public void ReturnsExpected(Type type, NameStyle style, string expected)
     {
         var typeNameInfo = TypeNameInfo.From(type);
         var shortName = typeNameInfo.GetShortName(style);
@@ -122,7 +126,7 @@ public class TypeNameInfoTests
     [Theory]
     [InlineData(NameStyle.Framework, "TKey")]
     [InlineData(NameStyle.DocId, "``0")]
-    public void GetShortName_ReturnsExpected_ForGenericParameter(NameStyle nameStyle, string expected)
+    public void ReturnsExpected_ForGenericParameter(NameStyle nameStyle, string expected)
     {
         Type type = typeof(Dictionary<,>).GetGenericArguments()[0];
         var typeNameInfo = TypeNameInfo.From(type);
@@ -133,7 +137,7 @@ public class TypeNameInfoTests
     [Theory]
     [InlineData(NameStyle.Framework, "<>f__AnonymousType")]
     [InlineData(NameStyle.DocId, "<>f__AnonymousType")]
-    public void GetShortName_ReturnsExpected_ForDynamicType(NameStyle nameStyle, string expected)
+    public void ReturnsExpected_ForDynamicType(NameStyle nameStyle, string expected)
     {
         var x = new { Hello = "hello" };
         Type type = x.GetType();
@@ -141,7 +145,10 @@ public class TypeNameInfoTests
         var shortName = typeNameInfo.GetShortName(nameStyle);
         Assert.StartsWith(expected, shortName);
     }
+}
 
+public class GetFullName
+{
     [Theory]
     [InlineData(typeof(int), NameStyle.Framework, "System.Int32")]
     [InlineData(typeof(int), NameStyle.DocId, "System.Int32")]
@@ -155,7 +162,7 @@ public class TypeNameInfoTests
     [InlineData(typeof(int[,]), NameStyle.DocId, "System.Int32[0:,0:]")]
     [InlineData(typeof(object), NameStyle.Framework, "System.Object")]
     [InlineData(typeof(object), NameStyle.DocId, "System.Object")]
-    public void GetFullName_ReturnsExpected(Type type, NameStyle style, string expected)
+    public void ReturnsExpected(Type type, NameStyle style, string expected)
     {
         var typeNameInfo = TypeNameInfo.From(type);
         var fullName = typeNameInfo.GetFullName(style);
@@ -165,7 +172,7 @@ public class TypeNameInfoTests
     [Theory]
     [InlineData(NameStyle.Framework, "TKey")]
     [InlineData(NameStyle.DocId, "``0")]
-    public void GetFullName_ReturnsExpected_ForGenericParameter(NameStyle nameStyle, string expected)
+    public void ReturnsExpected_ForGenericParameter(NameStyle nameStyle, string expected)
     {
         Type type = typeof(Dictionary<,>).GetGenericArguments()[0];
         var typeNameInfo = TypeNameInfo.From(type);
@@ -176,7 +183,7 @@ public class TypeNameInfoTests
     [Theory]
     [InlineData(NameStyle.Framework, "<>f__AnonymousType")]
     [InlineData(NameStyle.DocId, "<>f__AnonymousType")]
-    public void GetFullName_ReturnsExpected_ForDynamicType(NameStyle nameStyle, string expected)
+    public void ReturnsExpected_ForDynamicType(NameStyle nameStyle, string expected)
     {
         var x = new { Hello = "hello" };
         Type type = x.GetType();
@@ -184,7 +191,10 @@ public class TypeNameInfoTests
         var fullName = typeNameInfo.GetFullName(nameStyle);
         Assert.StartsWith(expected, fullName);
     }
+}
 
+public class SpecialTypes
+{
     public enum SpecialType
     {
         ByRef,
@@ -196,7 +206,7 @@ public class TypeNameInfoTests
     [InlineData(typeof(int), SpecialType.ByRef, NameStyle.DocId, "Int32@")]
     [InlineData(typeof(int), SpecialType.Pointer, NameStyle.Framework, "Int32*")]
     [InlineData(typeof(int), SpecialType.Pointer, NameStyle.DocId, "Int32*")]
-    public void GetShortName_ReturnsExpected_ForSpecialTypes(Type type, SpecialType special, NameStyle style, string expected)
+    public void ReturnsExpectedShortName_ForSpecialTypes(Type type, SpecialType special, NameStyle style, string expected)
     {
         Type x = special switch
         {
@@ -218,11 +228,11 @@ public class TypeNameInfoTests
     }
 
     [Theory]
-    [InlineData(typeof(int), SpecialType.ByRef,  NameStyle.Framework, "System.Int32&")]
+    [InlineData(typeof(int), SpecialType.ByRef, NameStyle.Framework, "System.Int32&")]
     [InlineData(typeof(int), SpecialType.ByRef, NameStyle.DocId, "System.Int32@")]
     [InlineData(typeof(int), SpecialType.Pointer, NameStyle.Framework, "System.Int32*")]
     [InlineData(typeof(int), SpecialType.Pointer, NameStyle.DocId, "System.Int32*")]
-    public void GetFullName_ReturnsExpected_ForSpecialTypes(Type type, SpecialType special, NameStyle style, string expected)
+    public void ReturnsExpectedFullName_ForSpecialTypes(Type type, SpecialType special, NameStyle style, string expected)
     {
         Type x = special switch
         {
@@ -243,5 +253,4 @@ public class TypeNameInfoTests
             Assert.IsType<TypeNameInfo.Pointer>(typeNameInfo);
         }
     }
-
 }
