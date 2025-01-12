@@ -177,7 +177,7 @@ public partial record DocComments(
             MemberInfo? interfaceMember = interfaceType.GetMember(memberInfo.Name).FirstOrDefault();
             if (interfaceMember is not null)
             {
-                DocComments? interfaceComments = Parse(interfaceMember, depthScope);
+                DocComments? interfaceComments = Parse(interfaceMember);
                 if (interfaceComments is not null)
                     return interfaceComments;
             }

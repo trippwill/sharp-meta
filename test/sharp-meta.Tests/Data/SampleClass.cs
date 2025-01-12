@@ -37,5 +37,5 @@ public class SampleClass
     [Obsolete("This method is obsolete")]
     public void ObsoleteMethod() { }
 
-    internal static object MethodWithoutDocComments() => throw new NotImplementedException();
+    public object MethodWithoutDocComments() => throw new NotImplementedException();
 }
