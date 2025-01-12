@@ -17,6 +17,7 @@
     <PackageReference Include="xunit.analyzers" />
     <PackageReference Include="xunit.runner.visualstudio" /> 
     <PackageReference Include="coverlet.msbuild" />
+    <PackageReference Include="JunitXml.TestLogger" />
   </ItemGroup>
 
 </Project>
