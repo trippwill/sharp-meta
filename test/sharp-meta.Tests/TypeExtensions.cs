@@ -2,7 +2,7 @@
 using SharpMeta;
 using Xunit;
 
-namespace Tests.TypeExtensions;
+namespace Tests.TypeExtensionsTest;
 
 public class TryUnwrapNullable
 {
