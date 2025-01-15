@@ -46,22 +46,6 @@ public partial record DocComments(
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="memberInfo"/> is <see langword="null"/>.</exception>
     public static DocComments? Parse(MemberInfo memberInfo) => Parse(memberInfo, new DepthScope(MaxDepth));
 
-    /// <summary>
-    /// Normalizes the documentation comments for human readability.
-    /// </summary>
-    /// <returns>A new <see cref="DocComments"/> instance with normalized values.</returns>
-    public DocComments Normalize()
-    {
-        return new DocComments(
-            Summary is not null ? NormalizeString(Summary) : Summary,
-            Remarks is not null ? NormalizeString(Remarks) : Remarks,
-            Returns is not null ? NormalizeString(Returns) : Returns,
-            [.. Parameters.Select(p => (p.Name, NormalizeString(p.Value)))],
-            [.. TypeParameters.Select(tp => (tp.Name, NormalizeString(tp.Value)))],
-            [.. Exceptions.Select(e => (e.Name, NormalizeString(e.Value)))],
-            [.. Examples.Select(NormalizeString)]);
-    }
-
     private static DocComments? Parse(MemberInfo memberInfo, DepthScope depthScope)
     {
         using DepthScope.Releaser _ = depthScope.EnterScope();
@@ -195,6 +179,7 @@ public partial record DocComments(
                 string? summary = crefElement.Element("summary")?.Value.Trim();
                 string? returns = crefElement.Element("returns")?.Value.Trim();
                 string? remarks = crefElement.Element("remarks")?.Value.Trim();
+
                 var examples = crefElement.Elements("example")
                     .Select(e => e.Value.Trim())
                     .ToImmutableArray();
@@ -223,38 +208,5 @@ public partial record DocComments(
         }
 
         return null;
-    }
-
-    [GeneratedRegex(@"<br\s*/?>", RegexOptions.IgnoreCase, "en-US")]
-    internal static partial Regex BrTagRegex();
-    
-    [GeneratedRegex(@"</para\s*>", RegexOptions.IgnoreCase, "en-US")]
-    internal static partial Regex EndParaTagRegex();
-    
-    [GeneratedRegex(@"<para\s*>", RegexOptions.IgnoreCase, "en-US")]
-    internal static partial Regex StartParaTagRegex();
-    
-    [GeneratedRegex(@"<[^>]+>")]
-    internal static partial Regex XmlTagRegex();
-    
-    [GeneratedRegex(@"\s*\n\s*")]
-    internal static partial Regex WhitespaceNewLineRegex();
-
-    private static string NormalizeString(string input)
-    {
-        // Replace <br/> and <br /> with new lines
-        string result = BrTagRegex().Replace(input, "\n");
-
-        // Replace <para> and </para> with double new lines
-        result = StartParaTagRegex().Replace(result, string.Empty);
-        result = EndParaTagRegex().Replace(result, "\n\n");
-
-        // Remove other tags but preserve their content
-        result = XmlTagRegex().Replace(result, string.Empty);
-
-        // Normalize indentation
-        result = WhitespaceNewLineRegex().Replace(result, "\n");
-
-        return result.Trim();
     }
 }
