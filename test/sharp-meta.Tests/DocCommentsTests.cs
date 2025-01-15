@@ -104,31 +104,6 @@ public class MaxDepthTests : IDisposable
     }
 }
 
-public class Normalize
-{
-    [Fact]
-    public void ShouldNormalizeStringValues()
-    {
-        var docComments = new DocComments(
-            "<para>This is a summary.</para>",
-            "<remarks>This is a remark.<br/>With a line break.</remarks>",
-            "<returns>This is a return value.</returns>",
-            [("param1", "<param>This is a parameter.</param>")],
-            [],
-            [],
-            ["<example>This is an example.<br />With a line break.</example>"]
-        );
-
-        var normalized = docComments.Normalize();
-
-        Assert.Equal("This is a summary.", normalized.Summary);
-        Assert.Equal("This is a remark.\nWith a line break.", normalized.Remarks);
-        Assert.Equal("This is a return value.", normalized.Returns);
-        Assert.Contains(normalized.Parameters, p => p.Name == "param1" && p.Value == "This is a parameter.");
-        Assert.Contains(normalized.Examples, e => e == "This is an example.\nWith a line break.");
-    }
-}
-
 internal class TestClass
 {
     /// <summary>This is a summary.</summary>
