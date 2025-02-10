@@ -11,8 +11,8 @@
     <PackageVersion Include="JunitXml.TestLogger" Version="5.0.0" PrivateAssets="all" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
-    <PackageVersion Include="xunit.analyzers" Version="1.19.0" PrivateAssets="all" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.1" PrivateAssets="all" />
+    <PackageVersion Include="xunit.analyzers" Version="1.20.0" PrivateAssets="all" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.2" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
