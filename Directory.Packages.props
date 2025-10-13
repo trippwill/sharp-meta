@@ -8,22 +8,22 @@
 
   <ItemGroup>
     <PackageVersion Include="coverlet.msbuild" Version="6.0.4" PrivateAssets="all" />
-    <PackageVersion Include="JunitXml.TestLogger" Version="5.0.0" PrivateAssets="all" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
+    <PackageVersion Include="JunitXml.TestLogger" Version="7.0.2" PrivateAssets="all" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
-    <PackageVersion Include="xunit.analyzers" Version="1.21.0" PrivateAssets="all" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.2" PrivateAssets="all" />
+    <PackageVersion Include="xunit.analyzers" Version="1.24.0" PrivateAssets="all" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageVersion Include="System.Reflection.MetadataLoadContext" Version="9.0.3" />
+    <PackageVersion Include="System.Reflection.MetadataLoadContext" Version="9.0.9" />
   </ItemGroup>
 
   <ItemGroup>
     <GlobalPackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="all"/>
     <GlobalPackageReference Include="CSharpIsNullAnalyzer" Version="0.1.593" />
     <GlobalPackageReference Include="DotNetAnalyzers.DocumentationAnalyzers" Version="1.0.0-beta.59" />
-    <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.7.115" PrivateAssets="all" />
+    <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.8.118" PrivateAssets="all" />
     <GlobalPackageReference Include="Nullable" Version="1.3.1" />
   </ItemGroup>
 
